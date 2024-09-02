@@ -1,0 +1,17 @@
+import time
+
+def Hanoi(n, f, t, b):
+    if n==1:
+        print(f"Move: {f}-->{t}")
+    else:
+        Hanoi(n-1, f, b, t)
+        print(f"Move: {f}-->{t}")
+        Hanoi(n-1, b, t, f)
+        
+start_time = time.time() 
+
+Hanoi(4,'A', 'C', 'B')
+
+end_time = time.time() 
+
+print(f"실행 시간: {end_time - start_time}초")
