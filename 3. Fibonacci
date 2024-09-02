@@ -1,0 +1,20 @@
+import time
+
+def Fibonacci(a):
+    if a == 1 or a == 2:
+        return 1
+    else:
+        return Fibonacci(a-1) + Fibonacci(a-2)
+
+i = 1
+
+start_time = time.time()  
+
+while i <= 15:
+    x = Fibonacci(i)
+    print(x)
+    i += 1
+
+end_time = time.time() 
+
+print(f"실행 시간: {end_time - start_time}초")
