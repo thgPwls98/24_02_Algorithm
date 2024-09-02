@@ -1,0 +1,26 @@
+import time
+
+def Factorial(f):  #재귀
+    if f==1:
+        return 1
+    else:
+        return Factorial(f-1)*f
+    
+def factorial(f):    #반복
+    fact=1
+    for i in range(2, f+1):
+        fact *= i
+    return fact
+
+start_time1 = time.time()
+a=Factorial(7)
+end_time1 = time.time() 
+print(a)
+print(f"실행 시간: {end_time1 - start_time1}초")
+
+
+start_time2 = time.time()
+b=factorial(7)
+end_time2 = time.time() 
+print(b)
+print(f"실행 시간: {end_time2 - start_time2}초")
