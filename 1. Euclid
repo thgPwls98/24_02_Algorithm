@@ -1,0 +1,13 @@
+import time
+
+def Euclid(a,b):
+    if b==0:
+        return a
+    else:
+        return Euclid(b,a%b)
+    
+a,b,c,d,e,f=1679, 874, 3762, 4047, 6080, 3876
+x=Euclid(a,b)
+y=Euclid(c,d)
+z=Euclid(e,f)
+print(x,y,z)
