@@ -1,5 +1,5 @@
 import random
-import time
+import timeit
 
 def randomize(n):
     return [random.randint(0, 5 * n - 1) for _ in range(n)]
@@ -61,6 +61,12 @@ def merge_sort(arr):
             j += 1
             k += 1
 
+def time_sort(sort_function, data):
+    """Measure the time taken by a sorting function using timeit."""
+    def wrapper():
+        sort_function(data.copy())  # Use a copy to avoid in-place modification affecting subsequent tests
+    return timeit.timeit(wrapper, number=1)  # Measure time for a single execution
+
 def main():
     n = int(input("데이터 갯수: "))
 
@@ -70,27 +76,22 @@ def main():
 
     # Bubble Sort
     bubble_data = data.copy()
-    start_time = time.time()
-    bubble_sort(bubble_data)
-    end_time = time.time()
+    bubble_time = time_sort(bubble_sort, bubble_data)
     print_data(bubble_data, "버블 정렬")
-    print(f"버블 정렬 : {end_time - start_time:.6f} 초")
+    print(f"버블 정렬 : {bubble_time:.6f} 초")
 
     # Quick Sort
     quick_data = randomize(n)
-    start_time = time.time()
-    quick_sort(quick_data, 0, len(quick_data) - 1)
-    end_time = time.time()
+    quick_time = time_sort(lambda d: quick_sort(d, 0, len(d) - 1), quick_data)
     print_data(quick_data, "퀵 정렬")
-    print(f"퀵 정렬 : {end_time - start_time:.6f} 초")
+    print(f"퀵 정렬 : {quick_time:.6f} 초")
 
     # Merge Sort
     merge_data = randomize(n)
-    start_time = time.time()
-    merge_sort(merge_data)
-    end_time = time.time()
+    merge_time = time_sort(merge_sort, merge_data)
     print_data(merge_data, "합병 정렬")
-    print(f"합병 정렬 : {end_time - start_time:.6f} 초")
+    print(f"합병 정렬 : {merge_time:.6f} 초")
 
 if __name__ == "__main__":
     main()
+
