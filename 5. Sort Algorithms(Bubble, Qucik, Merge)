@@ -1,0 +1,96 @@
+import random
+import time
+
+def randomize(n):
+    return [random.randint(0, 5 * n - 1) for _ in range(n)]
+
+def print_data(data, title):
+    print(f"\n{title}")
+    print(' '.join(map(str, data)))
+
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+
+def quick_sort(arr, low, high):
+    if low < high:
+        pi = partition(arr, low, high)
+        quick_sort(arr, low, pi - 1)
+        quick_sort(arr, pi + 1, high)
+
+def partition(arr, low, high):
+    pivot = arr[high]
+    i = low - 1
+    for j in range(low, high):
+        if arr[j] < pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
+
+def merge_sort(arr):
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        L = arr[:mid]
+        R = arr[mid:]
+
+        merge_sort(L)
+        merge_sort(R)
+
+        i = j = k = 0
+
+        while i < len(L) and j < len(R):
+            if L[i] < R[j]:
+                arr[k] = L[i]
+                i += 1
+            else:
+                arr[k] = R[j]
+                j += 1
+            k += 1
+
+        while i < len(L):
+            arr[k] = L[i]
+            i += 1
+            k += 1
+
+        while j < len(R):
+            arr[k] = R[j]
+            j += 1
+            k += 1
+
+def main():
+    n = int(input("데이터 갯수: "))
+
+    print("\n랜덤 숫자")
+    data = randomize(n)
+    print_data(data, "초기 데이터")
+
+    # Bubble Sort
+    bubble_data = data.copy()
+    start_time = time.time()
+    bubble_sort(bubble_data)
+    end_time = time.time()
+    print_data(bubble_data, "버블 정렬")
+    print(f"버블 정렬 : {end_time - start_time:.6f} 초")
+
+    # Quick Sort
+    quick_data = randomize(n)
+    start_time = time.time()
+    quick_sort(quick_data, 0, len(quick_data) - 1)
+    end_time = time.time()
+    print_data(quick_data, "퀵 정렬")
+    print(f"퀵 정렬 : {end_time - start_time:.6f} 초")
+
+    # Merge Sort
+    merge_data = randomize(n)
+    start_time = time.time()
+    merge_sort(merge_data)
+    end_time = time.time()
+    print_data(merge_data, "합병 정렬")
+    print(f"합병 정렬 : {end_time - start_time:.6f} 초")
+
+if __name__ == "__main__":
+    main()
