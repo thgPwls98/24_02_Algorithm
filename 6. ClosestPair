@@ -1,0 +1,129 @@
+import tkinter as tk
+import random
+import math
+from tkinter import messagebox
+
+def dist(p1, p2):
+    return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
+
+def find_closest_pair_brute(points):
+    min_dist = float('inf')
+    min_pair = (points[0], points[1])
+
+    for i in range(len(points)):
+        for j in range(i + 1, len(points)):
+            d = dist(points[i], points[j])
+            if d < min_dist:
+                min_dist = d
+                min_pair = (points[i], points[j])
+    
+    return min_pair[0], min_pair[1], min_dist
+
+def find_closest_pair_divide_conquer(points):
+    def closest_pair_dc(px, py):
+        if len(px) <= 3:
+            return find_closest_pair_brute(px)
+        
+        mid = len(px) // 2
+        mid_x = px[mid][0]
+        
+        left_px = px[:mid]
+        right_px = px[mid:]
+        
+        left_py = [p for p in py if p[0] <= mid_x]
+        right_py = [p for p in py if p[0] > mid_x]
+        
+        p1_left, p2_left, dist_left = closest_pair_dc(left_px, left_py)
+        p1_right, p2_right, dist_right = closest_pair_dc(right_px, right_py)
+        
+        min_dist = min(dist_left, dist_right)
+        min_pair = (p1_left, p2_left) if dist_left < dist_right else (p1_right, p2_right)
+        
+        strip = [p for p in py if abs(p[0] - mid_x) < min_dist]
+        for i in range(len(strip)):
+            for j in range(i + 1, min(i + 7, len(strip))):
+                p1, p2 = strip[i], strip[j]
+                d = dist(p1, p2)
+                if d < min_dist:
+                    min_dist = d
+                    min_pair = (p1, p2)
+        
+        return min_pair[0], min_pair[1], min_dist
+
+    px = sorted(points, key=lambda p: p[0])
+    py = sorted(points, key=lambda p: p[1])
+    
+    return closest_pair_dc(px, py)
+
+def make_point_array():
+    global points
+    points = []
+    point_size = 6  
+    for _ in range(int(txt_no.get())):
+        x = random.random() * canvas.winfo_width()
+        y = random.random() * canvas.winfo_height()
+        points.append((x, y))
+        canvas.create_oval(x - point_size / 2, y - point_size / 2, x + point_size / 2, y + point_size / 2, fill='black')
+
+def btn_create_click():
+    canvas.delete("all")
+    make_point_array()
+
+def btn_find_brute_click():
+    if len(points) < 2:
+        messagebox.showerror("오류", "점이 두 개 이상 필요합니다.")
+        return
+    
+    p1, p2, distance = find_closest_pair_brute(points)
+    messagebox.showinfo("Brute Force 방법 - 가장 가까운 점 쌍", f"점 1: {p1}\n점 2: {p2}\n거리: {distance:.2f}")
+
+    canvas.create_oval(p1[0] - 6 / 2, p1[1] - 6 / 2, 
+                       p1[0] + 6 / 2, p1[1] + 6 / 2, 
+                       fill='red')
+    canvas.create_oval(p2[0] - 6 / 2, p2[1] - 6 / 2, 
+                       p2[0] + 6 / 2, p2[1] + 6 / 2, 
+                       fill='red')
+    canvas.create_line(p1[0], p1[1], p2[0], p2[1], fill='red')
+
+def btn_find_dc_click():
+    if len(points) < 2:
+        messagebox.showerror("오류", "점이 두 개 이상 필요합니다.")
+        return
+    
+    p1, p2, distance = find_closest_pair_divide_conquer(points)
+    messagebox.showinfo("Divide and Conquer 방법 - 가장 가까운 점 쌍", f"점 1: {p1}\n점 2: {p2}\n거리: {distance:.2f}")
+
+    canvas.create_oval(p1[0] - 6 / 2, p1[1] - 6 / 2, 
+                       p1[0] + 6 / 2, p1[1] + 6 / 2, 
+                       fill='red')
+    canvas.create_oval(p2[0] - 6 / 2, p2[1] - 6 / 2, 
+                       p2[0] + 6 / 2, p2[1] + 6 / 2, 
+                       fill='red')
+    
+    x1, y1 = p1
+    x2, y2 = p2
+    canvas.create_rectangle(min(x1, x2) - 6, min(y1, y2) - 6, max(x1, x2) + 6, max(y1, y2) + 6, outline='red', width=2)
+
+
+root = tk.Tk()
+root.title("가장 가까운 점 쌍 찾기")
+
+canvas = tk.Canvas(root, width=600, height=400, bg='white')
+canvas.pack()
+
+frame = tk.Frame(root)
+frame.pack()
+
+txt_no = tk.Entry(frame)
+txt_no.pack(side=tk.LEFT, padx=5)
+
+btn_create = tk.Button(frame, text="점 생성", command=btn_create_click)
+btn_create.pack(side=tk.LEFT, padx=5)
+
+btn_find_brute = tk.Button(frame, text="Brute Force 방법으로 찾기", command=btn_find_brute_click)
+btn_find_brute.pack(side=tk.LEFT, padx=5)
+
+btn_find_dc = tk.Button(frame, text="Divide and Conquer 방법으로 찾기", command=btn_find_dc_click)
+btn_find_dc.pack(side=tk.LEFT, padx=5)
+
+root.mainloop()
